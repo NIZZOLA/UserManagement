@@ -1,0 +1,55 @@
+@baseUrl = http://localhost:5000
+@contentType = application/json
+
+### 1. Registrar um novo usuário
+POST {{baseUrl}}/register
+Content-Type: {{contentType}}
+
+{
+    "username": "testuser",
+    "email": "test@example.com",
+    "password": "Senha@123",
+    "confirmPassword": "Senha@123"
+}
+
+### 2. Fazer login e obter JWT
+POST {{baseUrl}}/login
+Content-Type: {{contentType}}
+
+{
+    "email": "test@example.com",
+    "password": "Senha@123"
+}
+
+### 3. Listar todos os usuários (requer autenticação)
+GET {{baseUrl}}/users
+Authorization: Bearer {{token}}  # Substitua {{token}} pelo JWT retornado no login
+
+### 4. Buscar usuário por ID (requer autenticação)
+GET {{baseUrl}}/users/{{userId}}  # Substitua {{userId}} pelo ID real
+Authorization: Bearer {{token}}
+
+### 5. Atualizar usuário (requer autenticação)
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+    "username": "updateduser",
+    "email": "updated@example.com"
+}
+
+### 6. Deletar usuário (requer autenticação)
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### 7. Adicionar role a um usuário (requer autenticação)
+POST {{baseUrl}}/users/{{userId}}/roles
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+"Admin"  # Role a ser adicionada
+
+### 8. Listar roles de um usuário (requer autenticação)
+GET {{baseUrl}}/users/{{userId}}/roles
+Authorization: Bearer {{token}}

@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35222.181
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement-Api", "UserManagement-Api\UserManagement-Api.csproj", "{80E78621-1475-4500-9A01-6EF35C9A39E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens de Solução", "{9A37F2CA-63DF-4A9F-B69F-071312A7ED84}"
+	ProjectSection(SolutionItems) = preProject
+		identity-api-tests.http = identity-api-tests.http
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80E78621-1475-4500-9A01-6EF35C9A39E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E78621-1475-4500-9A01-6EF35C9A39E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E78621-1475-4500-9A01-6EF35C9A39E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E78621-1475-4500-9A01-6EF35C9A39E9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {56C184A4-9F65-47E5-BEA2-D31AA7B71B70}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,67 @@
+@baseUrl = http://localhost:5064
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0Y2MwNTBkNy03MTAwLTQ0NjUtOWJjYy1iMmU0MGMwMmQ4OWQiLCJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NDM0NzA0NzcsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0IiwiYXVkIjoiaHR0cHM6Ly9sb2NhbGhvc3QifQ.5TtlMzVS9kXJIr7yi-BaTr-YFHhoO4aKjy30he4swzo
+@contentType = application/json
+
+### 1. Registrar um novo usuário
+POST {{baseUrl}}/user/register
+Content-Type: {{contentType}}
+
+{
+    "username": "marcionizzola",
+    "email": "marcio.nizzola@etec.sp.gov.br",
+    "password": "Senha@123",
+    "confirmPassword": "Senha@123"
+}
+
+### 2. Fazer login e obter JWT
+POST {{baseUrl}}/user/login
+Content-Type: {{contentType}}
+
+{
+    "email": "user@example.com",
+    "password": "123#Mudar"
+}
+
+### 3. Listar todos os usuários (requer autenticação)
+GET {{baseUrl}}/user/users
+Authorization: Bearer {{token}}  
+### Substitua {{token}} pelo JWT retornado no login
+
+### 4. Buscar usuário por ID (requer autenticação)
+GET {{baseUrl}}/users/{{userId}}  # Substitua {{userId}} pelo ID real
+Authorization: Bearer {{token}}
+
+### 5. Atualizar usuário (requer autenticação)
+PUT {{baseUrl}}/users/{{userId}}
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+{
+    "username": "updateduser",
+    "email": "updated@example.com"
+}
+
+### 6. Deletar usuário (requer autenticação)
+DELETE {{baseUrl}}/users/{{userId}}
+Authorization: Bearer {{token}}
+
+### 7. Adicionar role a um usuário (requer autenticação)
+POST {{baseUrl}}/users/{{userId}}/roles
+Content-Type: {{contentType}}
+Authorization: Bearer {{token}}
+
+"Admin"  # Role a ser adicionada
+
+@userId =
+
+### 8. Listar roles de um usuário (requer autenticação)
+GET {{baseUrl}}/users/{{userId}}/roles
+Authorization: Bearer {{token}}
+
+
+###9 - Criar roles
+POST {{baseUrl}}/roles/create
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+"Manager"  // Role a ser criada
