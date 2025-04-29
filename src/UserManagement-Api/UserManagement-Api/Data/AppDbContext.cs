@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace UserManagement_Api.Data
+namespace UserManagement_Api.Data;
+
+public class AppDbContext : IdentityDbContext<IdentityUser>
 {
-    public class AppDbContext : IdentityDbContext<IdentityUser>
-    {
-        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-    }
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 }

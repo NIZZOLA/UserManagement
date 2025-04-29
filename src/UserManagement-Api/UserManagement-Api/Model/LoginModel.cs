@@ -1,8 +1,7 @@
-﻿namespace UserManagement_Api.Model
+﻿namespace UserManagement_Api.Model;
+
+public class LoginModel
 {
-    public class LoginModel
-    {
-        public required string Email { get; set; }
-        public required string Password { get; set; }
-    }
+    public required string Email { get; set; }
+    public required string Password { get; set; }
 }

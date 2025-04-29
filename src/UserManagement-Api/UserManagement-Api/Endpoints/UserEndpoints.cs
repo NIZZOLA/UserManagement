@@ -8,6 +8,7 @@ using System.Security.Claims;
 using System.Text;
 using UserManagement_Api.Model;
 using UserManagement_Api.Model.ResponseModels;
+
 namespace UserManagement_Api.Endpoints;
 
 public static class UserEndpoints
