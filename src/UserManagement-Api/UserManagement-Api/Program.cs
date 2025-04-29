@@ -3,19 +3,19 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using System;
 using System.Text;
 using UserManagement_Api.Data;
 using UserManagement_Api.Endpoints;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adicione o Identity ao container DI
+// Adiciona o Identity ao container DI
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>()  // Substitua pelo seu DbContext
+    .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
+
 builder.Services.AddAuthorization();
-// Adicione autentica��o JWT (opcional para APIs)
+// Adiciona autenticação JWT (opcional para APIs)
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -77,7 +77,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-// Middlewares necess�rios
+// Middlewares necessarios
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseCors("PermitirTudo"); // Habilita a política criada
@@ -89,9 +89,9 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.MapUserEndpoints();
 app.MapRoleEndpoints();
 app.MapClaimEndpoints();
 
 app.Run();
-

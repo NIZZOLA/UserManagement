@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using UserManagement_Api.Model;
 
@@ -10,9 +11,8 @@ namespace UserManagement_Api.Endpoints
         {
             var group = routes.MapGroup("/api/claim").WithTags("Claims");
 
-            group.MapPost("/users/assign-claim", async (
-    AssignClaimToUserRequest request,
-    UserManager<IdentityUser> userManager) =>
+            group.MapPost("/users/assign-claim", async ([FromServices] UserManager<IdentityUser> userManager,
+                    [FromBody] AssignClaimToUserRequest request) =>
             {
                 var user = await userManager.FindByIdAsync(request.UserId);
                 if (user == null)
@@ -26,9 +26,8 @@ namespace UserManagement_Api.Endpoints
                     : Results.BadRequest(result.Errors);
             }).RequireAuthorization();
 
-            group.MapPost("/roles/assign-claim", async (
-    AssignClaimToRoleRequest request,
-    RoleManager<IdentityRole> roleManager) =>
+            group.MapPost("/roles/assign-claim", async ([FromServices] RoleManager<IdentityRole> roleManager,
+                [FromBody] AssignClaimToRoleRequest request) =>
             {
                 var role = await roleManager.FindByNameAsync(request.RoleName);
                 if (role == null)
@@ -42,9 +41,8 @@ namespace UserManagement_Api.Endpoints
                     : Results.BadRequest(result.Errors);
             }).RequireAuthorization();
 
-            group.MapGet("/users/{userId}/claims", async (
-    string userId,
-    UserManager<IdentityUser> userManager) =>
+            group.MapGet("/users/{userId}/claims", async ([FromServices] UserManager<IdentityUser> userManager,
+                [FromQuery] string userId) =>
             {
                 var user = await userManager.FindByIdAsync(userId);
                 if (user == null)
@@ -54,9 +52,8 @@ namespace UserManagement_Api.Endpoints
                 return Results.Ok(claims.Select(c => new { c.Type, c.Value }));
             }).RequireAuthorization();
 
-            group.MapGet("/roles/{roleName}/claims", async (
-    string roleName,
-    RoleManager<IdentityRole> roleManager) =>
+            group.MapGet("/roles/{roleName}/claims", async ([FromServices] RoleManager<IdentityRole> roleManager,
+                    [FromQuery] string roleName) =>
             {
                 var role = await roleManager.FindByNameAsync(roleName);
                 if (role == null)
@@ -66,9 +63,8 @@ namespace UserManagement_Api.Endpoints
                 return Results.Ok(claims.Select(c => new { c.Type, c.Value }));
             }).RequireAuthorization();
 
-            group.MapDelete("/users/remove-claim", async (
-    AssignClaimToUserRequest request,
-    UserManager<IdentityUser> userManager) =>
+            group.MapDelete("/users/remove-claim", async ([FromServices] UserManager<IdentityUser> userManager,
+                    [FromBody] AssignClaimToUserRequest request) =>
             {
                 var user = await userManager.FindByIdAsync(request.UserId);
                 if (user == null)

@@ -1,12 +1,13 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.OpenApi;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.Elfie.Model;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using UserManagement_Api.Model;
+using UserManagement_Api.Model.ResponseModels;
 namespace UserManagement_Api.Endpoints;
 
 public static class UserEndpoints
@@ -15,7 +16,7 @@ public static class UserEndpoints
     {
         var group = routes.MapGroup("/api/user").WithTags("User");
 
-        group.MapPost("/register", async (RegisterModel model, UserManager<IdentityUser> userManager) =>
+        group.MapPost("/register", async ([FromServices] UserManager<IdentityUser> userManager, [FromBody] RegisterModel model) =>
         {
             var user = new IdentityUser { UserName = model.Username, Email = model.Email };
             var result = await userManager.CreateAsync(user, model.Password);
@@ -25,7 +26,8 @@ public static class UserEndpoints
                 : Results.BadRequest(result.Errors);
         });
 
-        group.MapPost("/login", async (LoginModel model, UserManager<IdentityUser> userManager, IConfiguration config) =>
+        group.MapPost("/login", async ([FromServices] UserManager<IdentityUser> userManager,
+                                [FromServices] IConfiguration config, LoginModel model) =>
         {
             var user = await userManager.FindByEmailAsync(model.Email);
             if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
@@ -48,7 +50,6 @@ public static class UserEndpoints
                 claims.Add(new Claim(ClaimTypes.Role, role));
             }
 
-
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -62,19 +63,23 @@ public static class UserEndpoints
             return Results.Ok(new { token = new JwtSecurityTokenHandler().WriteToken(token) });
         });
 
-        group.MapGet("/users", async (UserManager<IdentityUser> userManager) =>
+        group.MapGet("/users", async ([FromServices] UserManager<IdentityUser> userManager) =>
         {
             var users = await userManager.Users.ToListAsync();
-            return Results.Ok(users);
+
+            List<UserResponse> userList = MapUserListResponse(users);
+
+            return Results.Ok(userList);
         });
 
-        group.MapGet("/users/{id}", async (string id, UserManager<IdentityUser> userManager) =>
+        group.MapGet("/users/{id}", async ([FromServices] UserManager<IdentityUser> userManager, [FromQuery] string id) =>
         {
             var user = await userManager.FindByIdAsync(id);
             return user != null ? Results.Ok(user) : Results.NotFound();
         });
 
-        group.MapPut("/users/{id}", async (string id, UpdateUserModel model, UserManager<IdentityUser> userManager) =>
+        group.MapPut("/users/{id}", async ([FromServices] UserManager<IdentityUser> userManager, 
+                    [FromQuery] string id, [FromBody] UpdateUserModel model) =>
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
@@ -87,7 +92,8 @@ public static class UserEndpoints
             return result.Succeeded ? Results.Ok(user) : Results.BadRequest(result.Errors);
         });
 
-        group.MapDelete("/users/{id}", async (string id, UserManager<IdentityUser> userManager) =>
+        group.MapDelete("/users/{id}", async ([FromServices] UserManager<IdentityUser> userManager, 
+                    [FromQuery] string id) =>
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
@@ -99,11 +105,13 @@ public static class UserEndpoints
                 : Results.BadRequest(result.Errors);
         });
 
-        group.MapPost("/users/{id}/roles", async (string id, string roleName, UserManager<IdentityUser> userManager) =>
+        //associa um usuário à um papel - (role)
+        group.MapPost("/users/{id}/roles", async ([FromServices] UserManager<IdentityUser> userManager,
+            [FromQuery] string id, [FromBody] string roleName) =>
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
-                return Results.NotFound();
+                return Results.NotFound();  
 
             var result = await userManager.AddToRoleAsync(user, roleName);
             return result.Succeeded
@@ -111,7 +119,8 @@ public static class UserEndpoints
                 : Results.BadRequest(result.Errors);
         });
 
-        group.MapGet("/users/{id}/roles", async (string id, UserManager<IdentityUser> userManager) =>
+        group.MapGet("/users/{id}/roles", async ([FromServices] UserManager<IdentityUser> userManager,
+            [FromQuery] string id) =>
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
@@ -120,6 +129,21 @@ public static class UserEndpoints
             var roles = await userManager.GetRolesAsync(user);
             return Results.Ok(roles);
         });
+    }
 
+    private static List<UserResponse> MapUserListResponse(List<IdentityUser> users)
+    {
+        var userList = new List<UserResponse>();
+        foreach (var item in users)
+        {
+            userList.Add(new UserResponse
+            {
+                Id = item.Id,
+                Email = item.Email,
+                UserName = item.UserName,
+            });
+        }
+
+        return userList;
     }
 }

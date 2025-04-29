@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace UserManagement_Api.Endpoints
@@ -9,7 +10,8 @@ namespace UserManagement_Api.Endpoints
         {
             var group = routes.MapGroup("/api/role").WithTags("Roles");
 
-            group.MapPost("/create", async (string roleName, RoleManager<IdentityRole> roleManager) =>
+            group.MapPost("/create", async ([FromServices] RoleManager<IdentityRole> roleManager,
+                [FromBody] string roleName) =>
             {
                 if (string.IsNullOrEmpty(roleName))
                     return Results.BadRequest("Nome da role não pode ser vazio.");
@@ -24,13 +26,11 @@ namespace UserManagement_Api.Endpoints
                     : Results.BadRequest(result.Errors);
             }).RequireAuthorization(); // Protege o endpoint (só admin pode criar roles)
 
-            group.MapGet("/list", async (RoleManager<IdentityRole> roleManager) =>
+            group.MapGet("/list", async ([FromServices] RoleManager<IdentityRole> roleManager) =>
             {
                 var roles = await roleManager.Roles.ToListAsync();
                 return Results.Ok(roles.Select(r => r.Name));
             }).RequireAuthorization(); // Protege o endpoint (opcional)
         }
-
-
     }
 }
