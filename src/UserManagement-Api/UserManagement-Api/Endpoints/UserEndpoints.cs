@@ -136,12 +136,7 @@ public static class UserEndpoints
         var userList = new List<UserResponse>();
         foreach (var item in users)
         {
-            userList.Add(new UserResponse
-            {
-                Id = item.Id,
-                Email = item.Email,
-                UserName = item.UserName,
-            });
+            userList.Add(new UserResponse(item));
         }
 
         return userList;
